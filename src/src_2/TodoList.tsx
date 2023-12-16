@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./Button";
 export type TaskType = {
-    id: number
+    id: string
     title: string
     isDone: boolean
 }
@@ -9,7 +9,7 @@ export type TaskType = {
 type TodoListType = {
     title: string
     data: Array<TaskType>
-    removeTasks: (idTasks: number) => void
+    removeTasks: (idTasks: string) => void
     removeAll: () => void
 }
 
@@ -42,10 +42,14 @@ export const TodoList = ({data, title, removeTasks,removeAll}: TodoListType) => 
     return(
     <div>
          <h2>{title}</h2>
+         <div>
+            <input/>
+            <Button clicked={() => alert("Добавить!")}title="+"/>
+         </div>
         <ul>
             {data.map((d)=> {
                 return (
-                    <li>
+                    <li key={(d.id)}>
                         <span>{d.title}</span>
                          <input type="checkbox" checked={d.isDone}/>
                          <Button clicked={() => {removeTasks(d.id)}}title="x"/>
