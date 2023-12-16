@@ -20,6 +20,15 @@ function removeTasks(idTasks: string) {
     setTasks(tasksCopy2);
 }
 
+function addTasks(newTextInput: string) {
+    const newTasks ={
+        id: v1(), title: newTextInput, isDone: false,
+    }
+    const copyTasks5 = [newTasks, ...tasks]
+
+    setTasks(copyTasks5);
+}
+
 function removeAll() {
   const copyTasck4 = tasks.filter((t,index) => index < 0)
     setTasks(copyTasck4)
@@ -32,6 +41,7 @@ function removeAll() {
                       data={tasks}
                       removeTasks={removeTasks}
                       removeAll={removeAll}
+                      addTasks ={addTasks}
                       />
         
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Button } from "./Button";
 export type TaskType = {
     id: string
@@ -11,16 +11,15 @@ type TodoListType = {
     data: Array<TaskType>
     removeTasks: (idTasks: string) => void
     removeAll: () => void
+    addTasks: (newTextInput: string) => void
 }
 
 
-export const TodoList = ({data, title, removeTasks,removeAll}: TodoListType) => {
-
-
+export const TodoList = ({data, title, removeTasks, removeAll, addTasks}: TodoListType) => {
 
         type FilterValuesType = "all" | "active" | "completed" | "firstThreeTasks";
 
-        let [filter,setFilter] = useState<FilterValuesType>("all")
+        let [filter,setFilter] = useState<FilterValuesType>("all");
 
         function getTasksToFilter(tasks: Array<TaskType>, valueFilter: FilterValuesType): Array<TaskType> {
             let tasksCopy1 = valueFilter === "completed" ?
@@ -37,22 +36,62 @@ export const TodoList = ({data, title, removeTasks,removeAll}: TodoListType) => 
             setFilter(valueFilter)
         }
         
-        data = getTasksToFilter(data, filter)
+      data = getTasksToFilter(data, filter);
+
+      const [newTextInput,setNewTextInput] = useState('');
+
+      function onChangeHandler(event:ChangeEvent<HTMLInputElement>) {
+        const valueTarget = event.currentTarget.value;
+        setNewTextInput(valueTarget);
+      }
+
+      function onKeyDownHandler(event: KeyboardEvent<HTMLInputElement>) {
+            if(event.key ==='Enter') {
+             addTasks(newTextInput);
+             setNewTextInput("");
+            } 
+      }
+
+      function addTaskClicked () {
+        addTasks(newTextInput);
+        setNewTextInput("");
+      }
+
+    const changeFilterAll = () => {
+        changeFilter("all")
+    }
+
+    const changeFilterActive = () => {
+        changeFilter("active")
+        
+    }
+    const changeFilterCompleted = () => {
+        changeFilter("completed");
+    }
+    const changeFilterfirstThreeTasks = () => {
+        changeFilter("firstThreeTasks")
+        
+    }
 
     return(
     <div>
          <h2>{title}</h2>
          <div>
-            <input/>
-            <Button clicked={() => alert("Добавить!")}title="+"/>
+            <input value={newTextInput} onKeyDown={onKeyDownHandler} onChange={onChangeHandler}/>
+            <Button clicked={addTaskClicked} title="+"/>
          </div>
         <ul>
-            {data.map((d)=> {
+            {data.map((d) => {
+
+                const removeTasksHandler = () => {
+                    removeTasks(d.id)
+                }
+
                 return (
                     <li key={(d.id)}>
                         <span>{d.title}</span>
                          <input type="checkbox" checked={d.isDone}/>
-                         <Button clicked={() => {removeTasks(d.id)}}title="x"/>
+                         <Button clicked={removeTasksHandler} title="x"/>
                     </li>
                 )
             })}
@@ -60,10 +99,10 @@ export const TodoList = ({data, title, removeTasks,removeAll}: TodoListType) => 
         <div>
             <Button clicked={() => {removeAll()}} title="Delete All"/>
         </div>
-        <Button clicked={() => {changeFilter("all")}} title='All'/>
-        <Button clicked={() => {changeFilter("active")}} title='active'/>
-        <Button clicked={() => {changeFilter("completed")}} title='complited'/>
-        <Button clicked={() => {changeFilter("firstThreeTasks")}} title="firstThreeTasks"/>
+        <Button clicked={changeFilterAll} title='All'/>
+        <Button clicked={changeFilterActive} title='active'/>
+        <Button clicked={changeFilterCompleted} title='complited'/>
+        <Button clicked={changeFilterfirstThreeTasks} title="firstThreeTasks"/>
     </div>
     )
 }
