@@ -1,222 +1,203 @@
 import React, {useState} from 'react';
 import './App.css';
 import {Todolist} from './Todolist';
-import { v1 } from 'uuid';
+import {v1} from 'uuid';
 
 
+type ObjectType = {
+    title: string
+    filter: FilterValuesType
+    tasks: Array<TasksType>
+    students: Array<string>
+}
+export type TasksType = {
+    taskId: string
+    title: string
+    isDone: boolean
+}
 
 export type FilterValuesType = "all" | "active" | "completed";
 
+
 function App() {
 
-    let [tasks, setTasks] = useState([
-        { id: v1(), title: "HTML&CSS", isDone: true },
-        { id: v1(), title: "JS", isDone: true },
-        { id: v1(), title: "ReactJS", isDone: false },
-        { id: v1(), title: "Rest API", isDone: false },
-        { id: v1(), title: "GraphQL", isDone: false },
-    ]);
+    const [todo, setTodo] = useState<Array<ObjectType>>([
+        {
+            title: "What to learn",
+            filter: "all",
+            tasks: [
+                {taskId: v1(), title: "HTML&CSS", isDone: true},
+                {taskId: v1(), title: "JS", isDone: true}
+            ],
+            students: [
+                'Rick Kane',
+                'Finnlay Bentley',
+                'Samia North',
+                'Isaac Morton',
+                'Lily-Ann Clifford',
+                'Thalia Park',
+                'Sapphire Cruz',
+                'Cieran Vazquez',
+                'Anya Estes',
+                'Dominika Field',
+                'Rosanna Chung',
+                'Safiyah Davey',
+                'Ryley Beasley',
+                'Kalvin Trejo',
+                'Evie-Mae Farrell',
+                'Juliet Valencia',
+                'Astrid Austin',
+                'Lyle Montgomery',
+                'Nisha Mora',
+                'Kylie Callaghan',
+                'Star Wilks',
+                'Marissa Colley',
+                'Asa Fuller',
+                'Leigh Kemp',
+                'Avleen Dawson',
+                'Sammy Bonilla',
+                'Acacia Becker',
+                'Coral Shepherd',
+                'Melina Molina',
+                'Kiran Bailey',
+                'Clara Escobar',
+                'Alexandru Horn',
+                'Brandon-Lee Mercado',
+                'Elouise Weston',
+                'King Long',
+                'Kerri Searle',
+                'Kanye Hamer',
+                'Elwood Benitez',
+                'Mikail Whitaker',
+                'Bobby Hardy',
+                'Talha Ferry',
+                'Priscilla Landry',
+                'Olivia-Grace Cain',
+                'Kiaan Wallace',
+                'Wesley Padilla90',
+                'Ella-Grace Wooten91',
+                'Kaif Molloy92',
+                'Kamal Broadhurst93',
+                'Bianca Ferrell94',
+                'Micheal Talbot95',
+            ]
+        },
+        {
+            title: "What to do",
+            filter: "all",
+            tasks: [
+                {taskId: v1(), title: "HTML&CSS2", isDone: true},
+                {taskId: v1(), title: "JS2", isDone: true}
+            ],
+            students: [
+                'Jago Wormald1',
+                'Saul Milne2',
+                'Aariz Hester3',
+                'Dion Reeve4',
+                'Anisa Ortega5',
+                'Blade Cisneros6',
+                'Malaikah Phelps7',
+                'Zeeshan Gallagher8',
+                'Isobella Vo9',
+                'Rizwan Mathis10',
+                'Menaal Leach11',
+                'Kian Walton12',
+                'Orion Lamb13',
+                'Faizah Huynh14',
+                'Crystal Vaughan15',
+                'Vivien Hickman16',
+                'Stuart Lu17',
+                'Karol Davison18',
+                'Dario Burns19',
+                'Chloe Rich20',
+                'Martyna Felix',
+                'Nida Glass',
+                'Maeve Miles',
+                'Hasnain Puckett',
+                'Ayman Cano',
+                'Safwan Perry',
+                'Fox Kelly',
+                'Louise Barlow',
+                'Malaki Mcgill',
+                'Leanna Cline',
+                'Willard Hodge',
+                'Amelia Dorsey',
+                'Kiah Porter',
+                'Jeanne Daly',
+                'Mohsin Armstrong',
+                'Laurie Rangel',
+                'Princess Tierney',
+                'Kasim Kendall',
+                'Darryl Cope',
+                'Elysha Ray',
+                'Liyana Harris',
+                'Kashif Blackburn',
+                'Atif Zimmerman',
+                'Sila Hartley',
+                'Ralphie Hebert',
+            ]
+        }
+    ])
 
-    function removeTask(id: string) {
-        let filteredTasks = tasks.filter(t => t.id != id);
-        setTasks(filteredTasks);
+    function removeTask(taskId: string, todolistId: number) {
+        setTodo(todo.map((el, index) => index === todolistId ? {
+            ...el,
+            tasks: [...el.tasks.filter(fl => fl.taskId !== taskId)]
+        } : el))
     }
 
-    function addTask(title: string) {
-        let task = { id: v1(), title: title, isDone: false };
-        let newTasks = [task, ...tasks];
-        setTasks(newTasks);
+    function addTask(title: string, todolistId: number) {
+        let newTask: TasksType = {taskId: v1(), title: title, isDone: false};
+        setTodo(todo.map((el, index) => index === todolistId ? {...el, tasks: [newTask, ...el.tasks]} : el))
     }
 
-    let [filter, setFilter] = useState<FilterValuesType>("all");
-
-    let tasksForTodolist = tasks;
-
-    if (filter === "active") {
-        tasksForTodolist = tasks.filter(t => t.isDone === false);
-    }
-    if (filter === "completed") {
-        tasksForTodolist = tasks.filter(t => t.isDone === true);
+    function changeStatus(taskId: string, isDone: boolean, todolistId: number) {
+        setTodo(todo.map((el, index) => index === todolistId ? {
+            ...el,
+            tasks: el.tasks.map(m => m.taskId === taskId ? {...m, isDone: isDone} : m)
+        } : el))
     }
 
-    function changeFilter(value: FilterValuesType) {
-        setFilter(value);
+    function changeFilter(value: FilterValuesType, todolistId: number) {
+        setTodo(todo.map((el, index) => index === todolistId ? {...el, filter: value} : el))
     }
 
-
+    function removeTodolist(todolistId: number) {
+        setTodo(todo.filter((el, index) => index !== todolistId))
+    }
 
     return (
-            <div className="App">
-            <Todolist title="What to learn"
-                      tasks={tasksForTodolist}
-                      removeTask={removeTask}
-                      changeFilter={changeFilter}
-                      addTask={addTask}>
-                <div>
-//                  <div>Many intresting information</div>
-//              </div>
-            </Todolist>
-            </div>
+        <div className="App">
+            {
+                todo.map((tl, index) => {
+                    let allTodolistTasks = tl.tasks;
+                    let tasksForTodolist = allTodolistTasks;
+
+                    if (tl.filter === "active") {
+                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
+                    }
+                    if (tl.filter === "completed") {
+                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
+                    }
+
+                    return <Todolist
+                        key={index}
+                        id={index}
+                        title={tl.title}
+                        tasks={tasksForTodolist}
+                        students={tl.students}
+                        removeTask={removeTask}
+                        changeFilter={changeFilter}
+                        addTask={addTask}
+                        changeTaskStatus={changeStatus}
+                        filter={tl.filter}
+                        removeTodolist={removeTodolist}
+                    />
+                })
+            }
+
+        </div>
     );
 }
 
 export default App;
-
-// Hi guys!
-// 1. Let's try an alternative way. Instead of useState we can try useRef in Todolist.tsx:
-// <input
-//     //value={title}
-//     // onChange={ onChangeHandler }
-//     ref={onChangeRef}
-//     onKeyPress={onKeyPressHandler}
-// />
-// let onChangeRef = useRef<HTMLInputElement>(null)
-
-// Inside of  const addTask = () => {} use onChangeRef.current.value
-// 2. Let's try children and F.C:
-// We will use double 'tag' <Todolist></Todolist>
-// <Todolist title="What to learn"
-//           tasks={tasksForTodolist}
-//           removeTask={removeTask}
-//           changeFilter={changeFilter}
-//           addTask={addTask} >
-//     <div>
-//         <div>Many intresting information</div>
-//      </div>
-// </Todolist>
-//Inside of Todolist.tsx
-// Type out changes in PropsType: children?:React.ReactNode
-// export const Todolist:React.FC<PropsType>=({children, ...props}) =>{
-//     return(
-//         <div>
-//             <div>...</div>
-//             {children}
-//         </div>
-//      )
-// }
-// 3. Let's append some animation in our project:
-//yarn add  @formkit/auto-animate -D
-// we use -D, because the best practice is to add new extensions to the object inside the package.json
-// "devDependencies": {
-//     "@formkit/auto-animate": "^1.0.0-beta.3"
-//   }
-// const [listRef] = useAutoAnimate<HTMLUListElement>() in Todolist.tsx
-// <ul ref={listRef}>
-//Look how smoothly the tasks are added!
-//P.S. Do you understand why a new task append in all Todolists?
-// [because we only have one state for all our todolists, but we'll talk about that on Tuesday.]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//-------------------------------------------------------------------------------------------------------
-//
-// export type FilterValuesType = "all" | "active" | "completed";
-//
-// function App() {
-//
-//     let [tasks, setTasks] = useState([
-//         {id: v1(), title: "HTML&CSS", isDone: true},
-//         {id: v1(), title: "JS", isDone: true},
-//         {id: v1(), title: "ReactJS", isDone: false},
-//         {id: v1(), title: "Rest API", isDone: false},
-//         {id: v1(), title: "GraphQL", isDone: false},
-//     ]);
-//
-//     function removeTask(id: string) {
-//         let filteredTasks = tasks.filter(t => t.id != id);
-//         setTasks(filteredTasks);
-//     }
-//
-//     function addTask(title: string) {
-//         let task = {id: v1(), title: title, isDone: false};
-//         let newTasks = [task, ...tasks];
-//         setTasks(newTasks);
-//     }
-//
-//     let [filter, setFilter] = useState<FilterValuesType>("all");
-//
-//     let tasksForTodolist = tasks;
-//
-//     if (filter === "active") {
-//         tasksForTodolist = tasks.filter(t => t.isDone === false);
-//     }
-//     if (filter === "completed") {
-//         tasksForTodolist = tasks.filter(t => t.isDone === true);
-//     }
-//
-//     function changeFilter(value: FilterValuesType) {
-//         setFilter(value);
-//     }
-//
-//
-//     return (
-//         <div className="App">
-//             <Todolist title="What to learn"
-//                       tasks={tasksForTodolist}
-//                       removeTask={removeTask}
-//                       changeFilter={changeFilter}
-//                       addTask={addTask}>
-//                 <div>
-//                     <div>Many intresting information</div>
-//                     <div>Many intresting information</div>
-//                     <div>Many intresting information</div>
-//                     <div>Many intresting information</div>
-//                     <div>Many intresting information</div>
-//                 </div>
-//             </Todolist>
-//
-//             <Todolist title="What to learn"
-//                       tasks={tasksForTodolist}
-//                       removeTask={removeTask}
-//                       changeFilter={changeFilter}
-//                       addTask={addTask}>
-//                 <div>
-//                     <div>A lot of boring information</div>
-//                     <div>A lot of boring information</div>
-//                     <div>A lot of boring information</div>
-//                     <input placeholder={'A lot of boring information'}/>
-//                     <div>
-//                         <button>Boring Button 1</button>
-//                         <button>Boring Button 2</button>
-//                         <button>Boring Button 3</button>
-//                     </div>
-//                 </div>
-//             </Todolist>
-//
-//             <Todolist title="What to learn"
-//                       tasks={tasksForTodolist}
-//                       removeTask={removeTask}
-//                       changeFilter={changeFilter}
-//                       addTask={addTask}/>
-//         </div>
-//     );
-// }
-//
-// export default App;
